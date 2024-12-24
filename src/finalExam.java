@@ -4,6 +4,23 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 도서 관리 프로그램입니다.
+ * 
+ * @author Kim Hui Jin (khj1382443111@gmail.com)
+ * @version 1.2
+ * @since 1.0
+ * 
+ * @created 2024-12-23
+ * @lastModified 2024-12-24
+ * 
+ * @changelog
+ * <ul>
+ * 		<li>2024-12-23: 최초 생성</li>
+ * 		<li>2024-12-24: GUI 추가</li>
+ * </ul>
+ */
+
 public class finalExam {
     private static HashMap<String, String[]> bookMap = new HashMap<>();
     private static ArrayList<String> borrowRecords = new ArrayList<>();
@@ -33,7 +50,6 @@ public class finalExam {
 
             frame.add(mainPanel);
 
-            // 버튼 이벤트 설정
             viewBooksButton.addActionListener(e -> viewBooks());
             borrowBookButton.addActionListener(e -> borrowBook());
             returnBookButton.addActionListener(e -> returnBook());
