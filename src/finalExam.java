@@ -23,19 +23,22 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
- * 도서 관리 프로그램입니다.
+ * {@code finalExam} 도서 대출 관리 시스템의 GUI를 설정하고 사용자가 도서를 관리할 수 있는 기능을 제공하는 클래스
  * 
  * @author Kim Hui Jin (khj1382443111@gmail.com)
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  * 
  * @created 2024-12-23
- * @lastModified 2024-12-24
+ * @lastModified 2024-12-26
  * 
  * @changelog
  * <ul>
- * 		<li>2024-12-23: 최초 생성</li>
- * 		<li>2024-12-24: GUI 추가</li>
+ * 	<li>2024-12-23: 최초 생성</li>
+ * 	<li>2024-12-24: GUI 추가</li>
+ * 	<li>2024-12-26: 버튼 위치 조정, 배경색 추가, 상단 문구 추가</li>
+ * 	<li>2024-12-26: 배경색 변경, 로고 추가, 문구 색상 변경, 버튼색 추가</li>
+ * 	<li>2024-12-26: 패널 정렬, 도서 목록 조회 내 대출 가능 여부 출력 추가, 도서 추가 오류 수정</li>
  * </ul>
  */
 
@@ -44,8 +47,24 @@ public class finalExam {
     private static ArrayList<String> borrowRecords = new ArrayList<>();
     private static final Color backgroundColor = new Color(0x1245AB);
 
+    /**
+     * <li>도서 대출 관리 시스템의 메인 메서드로, GUI를 초기화하고 이벤트 리스너를 설정</li>
+     * <li>도서 목록을 CSV 파일에서 로드하기 위해 {@link #loadBooks()} 메서드를 호출</li>
+     *
+     * @param args 커맨드라인 인수
+     *     
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 버튼 위치 정렬</li>
+     *   <li>2024-12-26: 배경색, 로고, 문구 색상, 버튼색 추가</li>
+     * </ul>
+     */
     public static void main(String[] args) {
-        loadBooks();
+        loadBooks(); // 도서 목록을 CSV 파일에서 로드
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("도서 대출 관리 시스템");
@@ -70,7 +89,8 @@ public class finalExam {
             topLabel.setFont(font);
             topLabel.setForeground(Color.WHITE);
             topPanel.add(topLabel);
-            		
+            
+            // 버튼 생성 및 설정
             JButton viewBooksButton = new JButton("도서 목록 조회");
             viewBooksButton.setBackground(Color.WHITE);
             JButton borrowBookButton = new JButton("도서 대출");
@@ -82,6 +102,7 @@ public class finalExam {
             JButton exitButton = new JButton("종료");
             exitButton.setBackground(Color.WHITE);
 
+            // 중앙 패널에 버튼 추가
             centerPanel.add(viewBooksButton);
             centerPanel.add(borrowBookButton);
             centerPanel.add(returnBookButton);
@@ -93,30 +114,60 @@ public class finalExam {
             
             frame.add(mainPanel);
 
+            // 버튼 클릭 시 이벤트 리스너 설정
             viewBooksButton.addActionListener(e -> viewBooks());
             borrowBookButton.addActionListener(e -> borrowBook());
             returnBookButton.addActionListener(e -> returnBook());
             addBookButton.addActionListener(e -> addBook());
-            exitButton.addActionListener(e -> System.exit(0));
+            exitButton.addActionListener(e -> System.exit(0)); // 종료 버튼 클릭 시 애플리케이션 종료
 
             frame.setVisible(true);
         });
     }
 
+    /**
+     * <li>CSV 파일에서 도서 데이터를 로드하여 {@link bookMap}에 저장</li>
+     * <li>각 도서의 제목, 저자, ISBN 및 대출 가능 여부를 설정</li>
+     * 
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @throws IOException 파일 읽기 중 오류가 발생할 수 있음
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 도서 로드 오류 메시지 추가</li>
+     * </ul>
+     */
     private static void loadBooks() {
         try (BufferedReader reader = new BufferedReader(new FileReader("src/booklist.csv"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 3) {
-                    bookMap.put(data[0].trim(), new String[]{data[1].trim(), data[2].trim(), "true"});
+                String[] data = line.split(","); // CSV 파일에서 데이터 분리
+                if (data.length == 3) { // 데이터가 3개일 경우만 처리
+                    bookMap.put(data[0].trim(), new String[]{data[1].trim(), data[2].trim(), "true"}); // 도서 정보 추가
                 }
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "도서 데이터를 로드하는 중 오류가 발생했습니다.");
+            JOptionPane.showMessageDialog(null, "도서 데이터를 로드하는 중 오류가 발생했습니다."); // 오류 발생 시 메시지 표시
         }
     }
 
+    /**
+     * <li>현재 등록된 도서를 화면에 표시하는 새 JFrame을 생성</li>
+     * <li>도서 목록이 비어 있을 경우 적절한 메시지를 표시</li>
+     * 
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 배경색, 로고, 문구 색상, 버튼색 추가</li>
+     *   <li>2024-12-26: 대출 가능 여부 출력 추가</li>
+     * </ul>
+     */
     private static void viewBooks() {
         JFrame frame = new JFrame("도서 목록");
         frame.setSize(500, 250);
@@ -126,7 +177,7 @@ public class finalExam {
 
         try {
             // 도서 목록 출력
-            if (bookMap.isEmpty()) {
+            if (bookMap.isEmpty()) { // 도서 목록이 비어 있는 경우
                 textArea.setText("등록된 도서가 없습니다.");
             } else {
                 for (Map.Entry<String, String[]> entry : bookMap.entrySet()) {
@@ -139,14 +190,28 @@ public class finalExam {
                     textArea.append(String.format("제목: %s, 저자: %s, ISBN: %s, 대출 가능 여부: %s\n", title, author, isbn, availability));
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception e) { // 오류 발생 시 메시지 표시
             JOptionPane.showMessageDialog(frame, "오류 발생: " + e.getMessage());
         }
 
-        frame.add(new JScrollPane(textArea));
+        frame.add(new JScrollPane(textArea)); // 텍스트 영역을 스크롤 가능하게 만들어 프레임에 추가
         frame.setVisible(true);
     }
 
+    /**
+     * <li>사용자가 도서를 대출할 수 있도록 회원 정보를 입력받는 JFrame을 생성</li>
+     * <li>대출 가능 여부를 확인하고, 도서를 대출할 경우 상태를 업데이트</li>
+     * 
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 배경색, 로고, 문구 색상, 버튼색 추가</li>
+     *   <li>2024-12-26: 패널 정렬</li>
+     * </ul>
+     */
     private static void borrowBook() {
         JFrame frame = new JFrame("도서 대출");
         frame.setSize(370, 100);
@@ -161,6 +226,7 @@ public class finalExam {
         JButton searchButton = new JButton("검색");
         searchButton.setBackground(Color.WHITE);
 
+        // 패널에 구성 요소 추가
         panel.add(titleLabel);
         panel.add(titleField);
         panel.add(searchButton);
@@ -168,9 +234,10 @@ public class finalExam {
         frame.add(panel);
         frame.setVisible(true);
 
+        // 검색 버튼 클릭 시 이벤트 리스너 설정
         searchButton.addActionListener(e -> {
-            String title = titleField.getText().trim();
-            if (bookMap.containsKey(title)) {
+            String title = titleField.getText().trim(); // 입력된 도서 제목 가져오기
+            if (bookMap.containsKey(title)) { // 도서 제목이 bookMap에 존재하는지 확인
                 String[] bookInfo = bookMap.get(title);
 
                 if (bookInfo[2].equals("true")) { // 대출 가능 여부 확인
@@ -189,6 +256,7 @@ public class finalExam {
                     JButton borrowButton = new JButton("대출");
                     borrowButton.setBackground(Color.WHITE);
                     
+                    // 패널에 회원 정보 구성 요소 추가
                     JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                     namePanel.setBackground(backgroundColor);
                     namePanel.add(nameLabel);
@@ -206,27 +274,41 @@ public class finalExam {
                     memberFrame.add(memberPanel);
                     memberFrame.setVisible(true);
 
+                    // 대출 버튼 클릭 시 이벤트 리스너 설정
                     borrowButton.addActionListener(b -> {
-                        String memberInfo = nameField.getText() + " (" + idField.getText() + ")";
-                        borrowRecords.add(memberInfo);
+                        String memberInfo = nameField.getText() + " (" + idField.getText() + ")"; // 회원 정보 문자열 생성
+                        borrowRecords.add(memberInfo);// 대출 기록에 추가
 
-                        // 대출 가능 여부를 "false"로 업데이트
-                        bookInfo[2] = "false";
-                        bookMap.put(title, bookInfo);
+                        bookInfo[2] = "false"; // 도서의 대출 가능 여부를 'false'로 업데이트
+                        bookMap.put(title, bookInfo); // 업데이트된 도서 정보를 다시 저장
 
                         JOptionPane.showMessageDialog(memberFrame, "도서를 대출했습니다.");
                         memberFrame.dispose();
                         frame.dispose();
                     });
                 } else {
-                    JOptionPane.showMessageDialog(frame, "이미 대출 중인 도서입니다.");
+                    JOptionPane.showMessageDialog(frame, "이미 대출 중인 도서입니다."); // 대출 불가능 메시지 표시
                 }
             } else {
-                JOptionPane.showMessageDialog(frame, "일치하는 도서가 없습니다.");
+                JOptionPane.showMessageDialog(frame, "일치하는 도서가 없습니다."); // 도서 미발견 메시지 표시
             }
         });
     }
 
+    /**
+     * <li>사용자가 도서를 반납할 수 있도록 회원 정보를 입력받는 JFrame을 생성</li>
+     * <li>반납할 도서 제목을 입력받아 대출 가능 여부를 업데이트</li>
+     * 
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 배경색, 로고, 문구 색상, 버튼색 추가</li>
+     *   <li>2024-12-26: 패널 정렬</li>
+     * </ul>
+     */
     private static void returnBook() {
         JFrame frame = new JFrame("도서 반납");
         frame.setSize(280, 180);
@@ -244,6 +326,7 @@ public class finalExam {
         JButton returnButton = new JButton("반납");
         returnButton.setBackground(Color.WHITE);
 
+        // 패널에 회원 정보 구성 요소 추가
         JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         namePanel.setBackground(backgroundColor);
         namePanel.add(nameLabel);
@@ -261,12 +344,12 @@ public class finalExam {
         frame.add(panel);
         frame.setVisible(true);
 
+        // 반납 버튼 클릭 시 이벤트 리스너 설정
         returnButton.addActionListener(e -> {
             String memberInfo = nameField.getText() + " (" + idField.getText() + ")";
-            if (borrowRecords.contains(memberInfo)) {
-                borrowRecords.remove(memberInfo); // 대출 기록 제거
+            if (borrowRecords.contains(memberInfo)) { // 대출 기록에 회원 정보가 있는지 확인
+                borrowRecords.remove(memberInfo); // 대출 기록에서 회원 정보 제거
                 
-                // 새로운 프레임을 생성하여 도서 제목 입력 받기
                 JFrame titleFrame = new JFrame("반납할 도서 제목 입력");
                 titleFrame.setSize(370, 100);
                 titleFrame.getContentPane().setBackground(backgroundColor);
@@ -286,18 +369,18 @@ public class finalExam {
                 titleFrame.add(titlePanel);
                 titleFrame.setVisible(true);
 
+                // 확인 버튼 클릭 시 이벤트 리스너 설정
                 confirmButton.addActionListener(f -> {
-                    String title = titleField.getText().trim();
-                    if (bookMap.containsKey(title)) {
-                        String[] bookInfo = bookMap.get(title);
+                    String title = titleField.getText().trim(); // 입력된 도서 제목 가져오기
+                    if (bookMap.containsKey(title)) { // 도서 목록에 도서가 존재하는지 확인
+                        String[] bookInfo = bookMap.get(title); // 업데이트된 도서 정보를 다시 저장
                         
-                        // 대출 가능 여부를 "true"로 업데이트
-                        bookInfo[2] = "true";
+                        bookInfo[2] = "true"; // 도서의 대출 가능 여부를 'true'로 업데이트
                         bookMap.put(title, bookInfo);
                         
                         JOptionPane.showMessageDialog(titleFrame, "도서를 반납했습니다.");
-                        titleFrame.dispose(); // 입력 창 닫기
-                        frame.dispose(); // 회원 정보 창 닫기
+                        titleFrame.dispose();
+                        frame.dispose();
                     } else {
                         JOptionPane.showMessageDialog(titleFrame, "해당 도서가 존재하지 않습니다.");
                     }
@@ -308,6 +391,21 @@ public class finalExam {
         });
     }
 
+    /**
+     * <li>새로운 도서를 추가할 수 있도록 사용자로부터 정보를 입력받는 JFrame을 생성</li>
+     * <li>입력된 도서 제목, 저자 및 ISBN을 사용하여 {@link bookMap}에 도서를 추가</li>
+     * 
+     * @created 2024-12-23
+     * @lastModified 2024-12-26
+     * 
+     * @changelog
+     * <ul>
+     *   <li>2024-12-23: 최초 생성</li>
+     *   <li>2024-12-26: 배경색, 로고, 문구 색상, 버튼색 추가</li>
+     *   <li>2024-12-26: 패널 정렬</li>
+     *   <li>2024-12-26: 도서를 추가하면 도서 목록 조회가 안되는 오류 수정</li>
+     * </ul>
+     */
     private static void addBook() {
         JFrame frame = new JFrame("도서 추가");
         frame.setSize(330, 190);
@@ -316,6 +414,7 @@ public class finalExam {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel.setBackground(backgroundColor);
         
+        // 도서 제목 패널
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         titlePanel.setBackground(backgroundColor);
         JLabel titleLabel = new JLabel("도서 제목:");
@@ -342,7 +441,6 @@ public class finalExam {
         isbnPanel.add(isbnLabel);
         isbnPanel.add(isbnField);
 
-        // 추가 버튼
         JButton addButton = new JButton("추가");
         addButton.setBackground(Color.WHITE);
 
@@ -355,23 +453,24 @@ public class finalExam {
         frame.add(panel);
         frame.setVisible(true);
 
+        // 추가 버튼 클릭 시 이벤트 리스너 설정
         addButton.addActionListener(e -> {
             String title = titleField.getText().trim();
             String author = authorField.getText().trim();
             String isbn = isbnField.getText().trim();
 
             if (title.isEmpty() || author.isEmpty() || isbn.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "모든 필드를 입력하세요.");
-                return; // 입력이 잘못된 경우 추가하지 않음
+                JOptionPane.showMessageDialog(frame, "모든 필드를 입력하세요."); // 입력이 비어 있을 경우 메시지 표시
+                return;
             }
             
-            if (bookMap.containsKey(title)) {
+            if (bookMap.containsKey(title)) { // 이미 등록된 도서인지 확인
                 JOptionPane.showMessageDialog(frame, "이미 등록된 도서입니다.");
             } else {
-            	bookMap.put(title, new String[]{author, isbn, "true"});
+            	// 도서 정보 추가
+            	bookMap.put(title, new String[]{author, isbn, "true"}); // 도서 정보를 bookMap에 추가
                 JOptionPane.showMessageDialog(frame, "도서를 추가했습니다.");
                 frame.dispose();
-                System.out.println("현재 도서 목록: " + bookMap);
             }
         });
     }
