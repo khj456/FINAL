@@ -1,8 +1,24 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 /**
  * 도서 관리 프로그램입니다.
@@ -29,25 +45,44 @@ public class finalExam {
         loadBooks();
 
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("도서 대여 관리 시스템");
+            JFrame frame = new JFrame("도서 대출 관리 시스템");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(500, 400);
+            Color color = new Color(0xD4F4FA);
 
             JPanel mainPanel = new JPanel();
-            mainPanel.setLayout(new GridLayout(5, 1));
-
+            mainPanel.setLayout(new BorderLayout());
+            mainPanel.setBackground(color);
+            
+            JPanel centerPanel = new JPanel();
+            centerPanel.setLayout(new GridLayout(5, 1, 10, 10));
+            centerPanel.setBorder(new EmptyBorder(20, 50, 50, 50));
+            centerPanel.setBackground(color);
+            
+            JPanel topPanel = new JPanel();
+            topPanel.setBackground(color);
+            JLabel topLabel = new JLabel("도서 관리");
+            
+            Font font = new Font(Font.DIALOG, Font.BOLD, 30);
+            topLabel.setFont(font);
+            topLabel.setForeground(Color.BLUE);
+            topPanel.add(topLabel);
+            		
             JButton viewBooksButton = new JButton("도서 목록 조회");
             JButton borrowBookButton = new JButton("도서 대출");
             JButton returnBookButton = new JButton("도서 반납");
             JButton addBookButton = new JButton("도서 추가");
             JButton exitButton = new JButton("종료");
 
-            mainPanel.add(viewBooksButton);
-            mainPanel.add(borrowBookButton);
-            mainPanel.add(returnBookButton);
-            mainPanel.add(addBookButton);
-            mainPanel.add(exitButton);
+            centerPanel.add(viewBooksButton);
+            centerPanel.add(borrowBookButton);
+            centerPanel.add(returnBookButton);
+            centerPanel.add(addBookButton);
+            centerPanel.add(exitButton);
 
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            
             frame.add(mainPanel);
 
             viewBooksButton.addActionListener(e -> viewBooks());
