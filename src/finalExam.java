@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -48,7 +49,7 @@ public class finalExam {
             JFrame frame = new JFrame("도서 대출 관리 시스템");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(500, 400);
-            Color color = new Color(0xD4F4FA);
+            Color color = new Color(0x1245AB);
 
             JPanel mainPanel = new JPanel();
             mainPanel.setLayout(new BorderLayout());
@@ -59,20 +60,26 @@ public class finalExam {
             centerPanel.setBorder(new EmptyBorder(20, 50, 50, 50));
             centerPanel.setBackground(color);
             
+            ImageIcon image = new ImageIcon("src/로고.png");
             JPanel topPanel = new JPanel();
             topPanel.setBackground(color);
-            JLabel topLabel = new JLabel("도서 관리");
+            JLabel topLabel = new JLabel("도서 관리", image, JLabel.CENTER);
             
             Font font = new Font(Font.DIALOG, Font.BOLD, 30);
             topLabel.setFont(font);
-            topLabel.setForeground(Color.BLUE);
+            topLabel.setForeground(Color.WHITE);
             topPanel.add(topLabel);
             		
             JButton viewBooksButton = new JButton("도서 목록 조회");
+            viewBooksButton.setBackground(Color.WHITE);
             JButton borrowBookButton = new JButton("도서 대출");
+            borrowBookButton.setBackground(Color.WHITE);
             JButton returnBookButton = new JButton("도서 반납");
+            returnBookButton.setBackground(Color.WHITE);
             JButton addBookButton = new JButton("도서 추가");
+            addBookButton.setBackground(Color.WHITE);
             JButton exitButton = new JButton("종료");
+            exitButton.setBackground(Color.WHITE);
 
             centerPanel.add(viewBooksButton);
             centerPanel.add(borrowBookButton);
